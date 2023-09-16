@@ -5,7 +5,7 @@ import { ContactList } from "./ContactList/ContactList";
 import { ContactSearchFilter } from "./ContactSearchFilter/ContactSearchFilter";
 import css from "./App.module.css"
 
-
+const LS_KEY = 'contacts';
 export class App extends Component {
   state = {
     contacts: [
@@ -16,7 +16,19 @@ export class App extends Component {
   ],
     filter: '',
   }
+  componentDidMount = () => {
+    const startState = JSON.parse(localStorage.getItem(LS_KEY));
+    if (startState) {
+      this.setState({ contacts: [...startState] });
+    };
+  }
 
+  componentDidUpdate = (_, prevState) => {
+    if (prevState.contacts.length !== this.state.contacts.length) {
+      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts))
+      
+    };
+  }
   handleFormSubmit = data => {
     const newContact = { ...data, id: nanoid() };
     this.setState(({ contacts }) => {
